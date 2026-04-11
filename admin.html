@@ -151,6 +151,13 @@
   <script>
     const API = 'https://fantasydata-production.up.railway.app';
     let ratings = [];
+    let adminKey = localStorage.getItem('fs_admin_key') || '';
+
+    // Ask for key on load if not saved
+    if (!adminKey) {
+      adminKey = prompt('Clave de administrador:') || '';
+      if (adminKey) localStorage.setItem('fs_admin_key', adminKey);
+    }
 
     async function loadRatings() {
       try {
@@ -249,7 +256,7 @@
       try {
         const res = await fetch(`${API}/admin/ratings`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-admin-key': prompt('Clave de administrador:') || '' },
+          headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
           body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error(await res.text());
@@ -266,7 +273,7 @@
       try {
         const res = await fetch(`${API}/admin/ratings/${id}`, {
           method: 'DELETE',
-          headers: { 'x-admin-key': prompt('Clave de administrador:') || '' },
+          headers: { 'x-admin-key': adminKey },
         });
         if (!res.ok) throw new Error(await res.text());
         showStatus('Borrado correctamente', 'success');
