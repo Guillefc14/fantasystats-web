@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FantasyStats — Panel de Valoraciones</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid #1a1a1a; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
+    .logo span { font-weight: 800; font-size: 16px; }
+    .logo span em { color: #7c3aed; font-style: normal; }
+    .badge { background: #7c3aed33; color: #a78bfa; border: 1px solid #7c3aed; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+    .search-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    input[type=text], input[type=number], textarea, select {
+      background: #111; border: 1px solid #222; border-radius: 8px;
+      color: #fff; padding: 10px 14px; font-size: 14px; outline: none;
+    }
+    input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: #7c3aed; }
+    .search-row input { flex: 1; }
+    button { background: #7c3aed; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    button:hover { background: #6d28d9; }
+    button.secondary { background: #111; border: 1px solid #222; color: #888; }
+    button.secondary:hover { border-color: #7c3aed; color: #fff; }
+    button.danger { background: #ef444422; border: 1px solid #ef4444; color: #ef4444; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { color: #666; font-weight: 600; text-align: left; padding: 10px 12px; border-bottom: 1px solid #1a1a1a; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 10px 12px; border-bottom: 1px solid #111; vertical-align: middle; }
+    tr:hover td { background: #0d0d0d; }
+    td input, td textarea { width: 100%; background: transparent; border: none; color: #fff; font-size: 13px; padding: 2px 4px; }
+    td input:focus, td textarea:focus { background: #1a1a1a; border-radius: 4px; outline: none; }
+    .player-name { font-weight: 600; }
+    .team-name { color: #666; font-size: 12px; }
+    .manual-badge { background: #7c3aed33; color: #a78bfa; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; }
+    .empty { text-align: center; padding: 60px; color: #444; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #111; border: 1px solid #222; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; }
+    .modal h2 { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .status { padding: 10px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .status.success { background: #10b98122; border: 1px solid #10b981; color: #10b981; display: block; }
+    .status.error { background: #ef444422; border: 1px solid #ef4444; color: #ef4444; display: block; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="FS">
+      <span>Fantasy<em>Stats</em></span>
+    </a>
+    <span class="badge">Panel Admin</span>
+  </nav>
+
+  <div class="container">
+    <h1>Valoraciones de jugadores</h1>
+    <p class="subtitle">Introduce tus valoraciones manuales. Tienen prioridad sobre el cálculo automático de la app.</p>
+
+    <div id="status" class="status"></div>
+
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Buscar jugador por nombre..." oninput="filterTable()">
+      <button onclick="openModal()">+ Añadir jugador</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="ratingsTable">
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>% Titular</th>
+            <th>Forma (1-5)</th>
+            <th>Puja máx</th>
+            <th>Cláusula rec.</th>
+            <th>Semanas fuera</th>
+            <th>Notas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="8" class="empty">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2 id="modalTitle">Añadir jugador</h2>
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label>ID del jugador (de La Liga Fantasy)</label>
+        <input type="text" id="fPlayerId" placeholder="ej: 2494">
+      </div>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="fPlayerName" placeholder="ej: Oyarzabal">
+      </div>
+      <div class="form-group">
+        <label>Equipo</label>
+        <input type="text" id="fTeamName" placeholder="ej: Real Sociedad">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>% Titular (0-100)</label>
+          <input type="number" id="fStarterProb" min="0" max="100" placeholder="85">
+        </div>
+        <div class="form-group">
+          <label>Forma (1-5)</label>
+          <input type="number" id="fForm" min="1" max="5" placeholder="4">
+        </div>
+        <div class="form-group">
+          <label>Puja máxima (€)</label>
+          <input type="number" id="fMaxBid" placeholder="15000000">
+        </div>
+        <div class="form-group">
+          <label>Cláusula recomendada (€)</label>
+          <input type="number" id="fClause" placeholder="30000000">
+        </div>
+        <div class="form-group">
+          <label>Semanas fuera</label>
+          <input type="number" id="fWeeksOut" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notas</label>
+        <textarea id="fNotes" placeholder="Viene de Europa, problemas físicos..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeModal()">Cancelar</button>
+        <button onclick="saveRating()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://fantasydata-production.up.railway.app';
+    let ratings = [];
+
+    async function loadRatings() {
+      try {
+        const res = await fetch(`${API}/admin/ratings`);
+        ratings = await res.json();
+        renderTable(ratings);
+      } catch (e) {
+        showStatus('Error cargando datos: ' + e.message, 'error');
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty">Error al cargar</td></tr>';
+      }
+    }
+
+    function formatM(val) {
+      if (!val) return '-';
+      return (val / 1_000_000).toFixed(1) + 'M';
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('tableBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="empty">No hay valoraciones. Añade la primera.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(r => `
+        <tr>
+          <td>
+            <div class="player-name">${r.player_name || r.player_id} <span class="manual-badge">manual</span></div>
+            <div class="team-name">${r.team_name || ''}</div>
+          </td>
+          <td>${r.starter_prob != null ? r.starter_prob + '%' : '-'}</td>
+          <td>${r.form != null ? '★'.repeat(r.form) : '-'}</td>
+          <td>${formatM(r.max_bid)}</td>
+          <td>${formatM(r.recommended_clause)}</td>
+          <td>${r.weeks_out || 0}</td>
+          <td style="max-width:200px;color:#666;font-size:12px">${r.notes || '-'}</td>
+          <td>
+            <button class="secondary" onclick="editRating('${r.player_id}')" style="padding:6px 12px;font-size:12px">Editar</button>
+            <button class="danger" onclick="deleteRating('${r.player_id}')" style="padding:6px 12px;font-size:12px;margin-left:4px">Borrar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = ratings.filter(r =>
+        (r.player_name || '').toLowerCase().includes(q) ||
+        (r.team_name || '').toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    }
+
+    function openModal(id) {
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('modalTitle').textContent = id ? 'Editar jugador' : 'Añadir jugador';
+      if (!id) {
+        ['editId','fPlayerId','fPlayerName','fTeamName','fStarterProb','fForm','fMaxBid','fClause','fWeeksOut','fNotes']
+          .forEach(f => document.getElementById(f).value = '');
+      }
+    }
+
+    function editRating(id) {
+      const r = ratings.find(x => x.player_id === id);
+      if (!r) return;
+      document.getElementById('editId').value = r.player_id;
+      document.getElementById('fPlayerId').value = r.player_id;
+      document.getElementById('fPlayerName').value = r.player_name || '';
+      document.getElementById('fTeamName').value = r.team_name || '';
+      document.getElementById('fStarterProb').value = r.starter_prob ?? '';
+      document.getElementById('fForm').value = r.form ?? '';
+      document.getElementById('fMaxBid').value = r.max_bid ?? '';
+      document.getElementById('fClause').value = r.recommended_clause ?? '';
+      document.getElementById('fWeeksOut').value = r.weeks_out ?? 0;
+      document.getElementById('fNotes').value = r.notes || '';
+      openModal(id);
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    async function saveRating() {
+      const data = {
+        player_id: document.getElementById('fPlayerId').value.trim(),
+        player_name: document.getElementById('fPlayerName').value.trim(),
+        team_name: document.getElementById('fTeamName').value.trim(),
+        starter_prob: parseInt(document.getElementById('fStarterProb').value) || null,
+        form: parseInt(document.getElementById('fForm').value) || null,
+        max_bid: parseInt(document.getElementById('fMaxBid').value) || null,
+        recommended_clause: parseInt(document.getElementById('fClause').value) || null,
+        weeks_out: parseInt(document.getElementById('fWeeksOut').value) || 0,
+        notes: document.getElementById('fNotes').value.trim() || null,
+      };
+      if (!data.player_id) return alert('El ID del jugador es obligatorio');
+
+      try {
+        const res = await fetch(`${API}/admin/ratings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-key': prompt('Clave de administrador:') || '' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        closeModal();
+        showStatus('Guardado correctamente', 'success');
+        loadRatings();
+      } catch (e) {
+        showStatus('Error: ' + e.message, 'error');
+      }
+    }
+
+    async function deleteRating(id) {
+      if (!confirm('¿Borrar esta valoración?')) return;
+      try {
+        const res = await fetch(`${API}/admin/ratings/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-key': prompt('Clave de administrador:') || '' },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        showStatus('Borrado correctamente', 'success');
+        loadRatings();
+      } catch (e) {
+        showStatus('Error: ' + e.message, 'error');
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + type;
+      setTimeout(() => el.className = 'status', 4000);
+    }
+
+    loadRatings();
+  </script>
+</body>
+</html>
