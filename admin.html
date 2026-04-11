@@ -184,8 +184,13 @@
       tbody.innerHTML = data.map(r => `
         <tr>
           <td>
-            <div class="player-name">${r.player_name || r.player_id} <span class="manual-badge">manual</span></div>
-            <div class="team-name">${r.team_name || ''}</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              ${r.image_url ? `<img src="${r.image_url}" style="width:32px;height:32px;border-radius:50%;background:#1a1a1a">` : '<div style="width:32px;height:32px;border-radius:50%;background:#1a1a1a"></div>'}
+              <div>
+                <div class="player-name">${r.player_name || r.player_id} <span class="manual-badge">manual</span></div>
+                <div class="team-name">${r.team_name || ''}</div>
+              </div>
+            </div>
           </td>
           <td>${r.starter_prob != null ? r.starter_prob + '%' : '-'}</td>
           <td>${r.form != null ? '★'.repeat(r.form) : '-'}</td>
