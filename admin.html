@@ -74,7 +74,11 @@
 
     <div class="search-row">
       <input type="text" id="searchInput" placeholder="Buscar jugador por nombre..." oninput="filterTable()">
+      <select id="teamFilter" onchange="filterTable()" style="min-width:160px">
+        <option value="">Todos los equipos</option>
+      </select>
       <button onclick="openModal()">+ Añadir jugador</button>
+      <button class="secondary" onclick="runSeed()" id="seedBtn">⟳ Seed jugadores</button>
     </div>
 
     <div class="table-wrap">
@@ -163,6 +167,7 @@
       try {
         const res = await fetch(`${API}/admin/ratings`);
         ratings = await res.json();
+        populateTeamFilter(ratings);
         renderTable(ratings);
       } catch (e) {
         showStatus('Error cargando datos: ' + e.message, 'error');
@@ -206,13 +211,45 @@
       `).join('');
     }
 
+    function populateTeamFilter(data) {
+      const teams = [...new Set(data.map(r => r.team_name).filter(Boolean))].sort();
+      const sel = document.getElementById('teamFilter');
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Todos los equipos</option>' +
+        teams.map(t => `<option value="${t}" ${t === current ? 'selected' : ''}>${t}</option>`).join('');
+    }
+
     function filterTable() {
       const q = document.getElementById('searchInput').value.toLowerCase();
+      const team = document.getElementById('teamFilter').value;
       const filtered = ratings.filter(r =>
-        (r.player_name || '').toLowerCase().includes(q) ||
-        (r.team_name || '').toLowerCase().includes(q)
+        (!q || (r.player_name || '').toLowerCase().includes(q) || (r.team_name || '').toLowerCase().includes(q)) &&
+        (!team || r.team_name === team)
       );
       renderTable(filtered);
+    }
+
+    async function runSeed() {
+      const token = prompt('Pega tu Bearer token de La Liga Fantasy:');
+      if (!token) return;
+      const btn = document.getElementById('seedBtn');
+      btn.textContent = 'Seeding...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(`${API}/admin/seed`, {
+          method: 'POST',
+          headers: { 'x-admin-key': adminKey, 'Authorization': `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showStatus(data.message, 'success');
+        loadRatings();
+      } catch (e) {
+        showStatus('Error seed: ' + e.message, 'error');
+      } finally {
+        btn.textContent = '⟳ Seed jugadores';
+        btn.disabled = false;
+      }
     }
 
     function openModal(id) {
