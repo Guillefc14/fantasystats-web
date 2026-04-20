@@ -4,79 +4,109 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FantasyStats — Asistente inteligente para La Liga Fantasy</title>
-  <meta name="description" content="Recomendaciones de fichajes, 11 ideal, clausulazos y noticiero fantasy para La Liga Fantasy. Disponible en Google Play.">
+  <meta name="description" content="FantasyStats analiza tu liga en tiempo real y te da recomendaciones con IA para fichar mejor, alinear mejor y ganar más. Disponible en Google Play.">
   <link rel="icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
 
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid #1a1a1a; position: sticky; top: 0; background: #000; z-index: 10; }
-    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
-    .logo-name { font-weight: 800; font-size: 18px; color: #fff; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid #111; position: sticky; top: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo img { width: 32px; height: 32px; border-radius: 7px; }
+    .logo-name { font-weight: 800; font-size: 17px; color: #fff; letter-spacing: -0.02em; }
     .logo-name span { color: #7c3aed; }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a { color: #666; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: #555; text-decoration: none; font-size: 14px; transition: color 0.15s; }
     .nav-links a:hover { color: #fff; }
-    .nav-cta { background: #7c3aed !important; color: #fff !important; padding: 8px 18px; border-radius: 6px; font-weight: 700 !important; }
+    .nav-cta { background: #7c3aed !important; color: #fff !important; padding: 8px 20px; border-radius: 7px; font-weight: 700 !important; font-size: 13px !important; }
+    .nav-cta:hover { background: #6d28d9 !important; }
 
-    .hero { text-align: center; padding: 100px 20px 80px; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; background: #7c3aed18; border: 1px solid #7c3aed44; border-radius: 100px; padding: 6px 18px; font-size: 12px; color: #a78bfa; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 40px; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .hero h1 { font-size: clamp(36px, 6vw, 68px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; }
-    .hero h1 span { color: #7c3aed; }
-    .hero p { color: #666; font-size: 18px; max-width: 500px; margin: 0 auto 48px; line-height: 1.6; }
+    /* HERO */
+    .hero { text-align: center; padding: 120px 20px 100px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, #7c3aed18 0%, transparent 70%); pointer-events: none; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: #7c3aed12; border: 1px solid #7c3aed33; border-radius: 100px; padding: 6px 16px; font-size: 11px; color: #a78bfa; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-bottom: 36px; }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    .hero h1 { font-size: clamp(40px, 7vw, 72px); font-weight: 800; line-height: 1.05; margin-bottom: 24px; letter-spacing: -0.03em; }
+    .hero h1 em { color: #7c3aed; font-style: normal; }
+    .hero p { color: #555; font-size: 18px; max-width: 520px; margin: 0 auto 48px; line-height: 1.65; }
     .cta-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: #7c3aed; color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; transition: background 0.2s; }
-    .btn-primary:hover { background: #6d28d9; }
-    .btn-secondary { display: inline-flex; align-items: center; gap: 10px; background: #111; border: 1px solid #222; color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; transition: border-color 0.2s; }
-    .btn-secondary:hover { border-color: #7c3aed; }
-    .btn-icon { font-size: 18px; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #7c3aed; color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; transition: background 0.15s, transform 0.15s; }
+    .btn-primary:hover { background: #6d28d9; transform: translateY(-1px); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid #222; color: #aaa; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; transition: border-color 0.15s, color 0.15s; }
+    .btn-secondary:hover { border-color: #555; color: #fff; }
 
-    .section { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
-    .section-label { color: #7c3aed; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
-    .section-title { font-size: clamp(24px, 4vw, 36px); font-weight: 800; margin-bottom: 16px; }
-    .section-sub { color: #555; font-size: 16px; line-height: 1.6; max-width: 560px; }
+    /* INTEGRATION SECTION */
+    .integration { max-width: 900px; margin: 0 auto; padding: 80px 20px; text-align: center; }
+    .integration .label { color: #7c3aed; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .integration h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 20px; }
+    .integration p { color: #555; font-size: 16px; line-height: 1.7; max-width: 580px; margin: 0 auto 56px; }
+    .integration-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #111; border: 1px solid #111; border-radius: 14px; overflow: hidden; }
+    .int-card { background: #000; padding: 32px 28px; text-align: left; }
+    .int-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .int-card p { color: #444; font-size: 13px; line-height: 1.6; }
+    .int-card .tag { display: inline-block; background: #7c3aed18; color: #a78bfa; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; }
 
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: #1a1a1a; border: 1px solid #1a1a1a; border-radius: 16px; overflow: hidden; margin-top: 48px; }
-    .feature { background: #000; padding: 28px 32px; transition: background 0.2s; }
+    /* FEATURES */
+    .features-section { background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; }
+    .features-inner { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
+    .features-header { margin-bottom: 48px; }
+    .features-header .label { color: #7c3aed; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .features-header h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; letter-spacing: -0.02em; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: #111; border: 1px solid #111; border-radius: 14px; overflow: hidden; }
+    .feature { background: #050505; padding: 28px; transition: background 0.15s; }
     .feature:hover { background: #0a0a0a; }
-    .feature-icon { font-size: 24px; margin-bottom: 12px; }
-    .feature h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-    .feature p { color: #555; font-size: 13px; line-height: 1.6; }
+    .feature-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #e5e5e5; }
+    .feature-desc { color: #444; font-size: 13px; line-height: 1.6; }
 
-    .highlight { background: #0a0a0a; border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; }
-    .highlight-inner { max-width: 1000px; margin: 0 auto; padding: 80px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-    @media (max-width: 640px) { .highlight-inner { grid-template-columns: 1fr; } nav { padding: 16px 20px; } .nav-links { gap: 12px; } }
-    .highlight-text h2 { font-size: clamp(22px, 3vw, 32px); font-weight: 800; margin-bottom: 16px; }
-    .highlight-text p { color: #555; font-size: 15px; line-height: 1.7; margin-bottom: 12px; }
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .stat { background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px; }
-    .stat-num { font-size: 28px; font-weight: 800; color: #7c3aed; }
-    .stat-label { color: #555; font-size: 12px; margin-top: 4px; }
+    /* AI SECTION */
+    .ai-section { max-width: 900px; margin: 0 auto; padding: 80px 20px; }
+    .ai-inner { background: linear-gradient(135deg, #7c3aed0a 0%, #000 60%); border: 1px solid #7c3aed22; border-radius: 20px; padding: 56px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .ai-inner h2 { font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ai-inner p { color: #555; font-size: 15px; line-height: 1.7; margin-bottom: 12px; }
+    .ai-points { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .ai-points li { display: flex; align-items: flex-start; gap: 10px; color: #777; font-size: 14px; line-height: 1.5; }
+    .ai-points li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #7c3aed; margin-top: 7px; flex-shrink: 0; }
+    .ai-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ai-stat { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px; }
+    .ai-stat-num { font-size: 30px; font-weight: 800; color: #7c3aed; letter-spacing: -0.02em; }
+    .ai-stat-label { color: #444; font-size: 12px; margin-top: 4px; }
 
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; margin-top: 48px; }
+    /* STEPS */
+    .steps-section { background: #050505; border-top: 1px solid #111; }
+    .steps-inner { max-width: 900px; margin: 0 auto; padding: 80px 20px; text-align: center; }
+    .steps-inner .label { color: #7c3aed; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .steps-inner h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 48px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
     .step { text-align: center; }
-    .step-num { width: 40px; height: 40px; border-radius: 50%; background: #7c3aed22; border: 1px solid #7c3aed44; color: #a78bfa; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .step-num { width: 36px; height: 36px; border-radius: 50%; background: #7c3aed18; border: 1px solid #7c3aed33; color: #a78bfa; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .step h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-    .step p { color: #555; font-size: 13px; line-height: 1.5; }
+    .step p { color: #444; font-size: 13px; line-height: 1.6; }
 
-    .cta-section { text-align: center; padding: 100px 20px; }
-    .cta-section h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; margin-bottom: 16px; }
-    .cta-section p { color: #555; font-size: 16px; margin-bottom: 40px; }
+    /* CTA FINAL */
+    .cta-final { text-align: center; padding: 100px 20px; }
+    .cta-final h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .cta-final p { color: #555; font-size: 16px; margin-bottom: 40px; }
 
-    footer { text-align: center; padding: 40px 20px; border-top: 1px solid #111; color: #333; font-size: 13px; }
-    footer a { color: #444; text-decoration: none; margin: 0 10px; transition: color 0.2s; }
-    footer a:hover { color: #fff; }
-    .footer-note { margin-top: 16px; color: #222; font-size: 12px; }
+    footer { text-align: center; padding: 40px 20px; border-top: 1px solid #0d0d0d; }
+    footer a { color: #333; text-decoration: none; margin: 0 12px; font-size: 13px; transition: color 0.15s; }
+    footer a:hover { color: #777; }
+    .footer-note { margin-top: 20px; color: #1a1a1a; font-size: 12px; }
+
+    @media (max-width: 700px) {
+      nav { padding: 16px 20px; }
+      .nav-links { gap: 14px; }
+      .integration-cards, .steps { grid-template-columns: 1fr; }
+      .ai-inner { grid-template-columns: 1fr; padding: 36px 28px; }
+    }
   </style>
 </head>
 <body>
+
   <nav>
     <a href="index.html" class="logo">
-      <img src="logo.jpg" alt="FantasyStats">
+      <img src="logo.png" alt="FantasyStats">
       <span class="logo-name">Fantasy<span>Stats</span></span>
     </a>
     <div class="nav-links">
@@ -88,143 +118,160 @@
   </nav>
 
   <div class="hero">
-    <div class="badge"><span class="badge-dot"></span>Disponible en Google Play</div>
-    <h1>Gana en<br><span>La Liga Fantasy</span><br>con datos reales</h1>
-    <p>Recomendaciones de fichajes, 11 ideal, clausulazos y noticiero fantasy. Todo en una app.</p>
+    <div class="badge"><span class="badge-dot"></span>Disponible en Google Play · Fase beta</div>
+    <h1>Tu asistente con IA<br>para <em>La Liga Fantasy</em></h1>
+    <p>Se conecta con tu liga, analiza tus datos en tiempo real y te dice exactamente qué fichar, a quién alinear y cuándo actuar.</p>
     <div class="cta-group">
-      <a href="https://play.google.com/store/apps/details?id=com.guillefc.fantasystats" target="_blank" class="btn-primary">
-        <span class="btn-icon">▶</span> Descargar en Google Play
-      </a>
-      <a href="https://groups.google.com/g/fantasystats" target="_blank" class="btn-secondary">
-        <span class="btn-icon">🧪</span> Unirse como tester
-      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.guillefc.fantasystats" target="_blank" class="btn-primary">Descargar en Google Play</a>
+      <a href="https://groups.google.com/g/fantasystats" target="_blank" class="btn-secondary">Unirse como tester</a>
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-label">Funcionalidades</div>
-    <div class="section-title">Todo lo que necesitas para ganar</div>
-    <p class="section-sub">Análisis en tiempo real conectado directamente con La Liga Fantasy. Sin datos inventados.</p>
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">📊</div>
-        <h3>Recomendaciones de mercado</h3>
-        <p>Nota 0-10 para cada jugador según tu plantilla, su forma reciente, % de titularidad y el próximo rival.</p>
+  <div class="integration">
+    <div class="label">Integración total</div>
+    <h2>Conoce tu liga mejor que nadie</h2>
+    <p>FantasyStats se conecta directamente con tu cuenta de La Liga Fantasy. No introduces datos manualmente — la app los lee todos en tiempo real.</p>
+    <div class="integration-cards">
+      <div class="int-card">
+        <div class="tag">Tiempo real</div>
+        <h3>Tu plantilla analizada</h3>
+        <p>Cada jugador tuyo evaluado con recomendación de venta, puntos esperados y análisis de forma.</p>
       </div>
-      <div class="feature">
-        <div class="feature-icon">⚽</div>
-        <h3>11 Recomendado</h3>
-        <p>Alineación óptima con puntos estimados por jornada, capitán sugerido y rival de cada jugador.</p>
+      <div class="int-card">
+        <div class="tag">Automático</div>
+        <h3>Mercado de tu liga</h3>
+        <p>Todos los jugadores disponibles puntuados según tus necesidades, presupuesto y próximo fixture.</p>
       </div>
-      <div class="feature">
-        <div class="feature-icon">🔒</div>
-        <h3>Clausulazos</h3>
-        <p>Jugadores rivales con cláusulas asequibles, valorados por calidad real vs coste. Alertas automáticas.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📰</div>
-        <h3>Noticiero Fantasy</h3>
-        <p>Chollos de la jornada, jugadores subiendo y bajando de precio, recuperaciones y lesiones recientes.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⚖️</div>
-        <h3>Comparativa de jugadores</h3>
-        <p>Compara cualquier jugador del mercado, tu plantilla o clausulazos con estadísticas detalladas y veredicto.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🌿</div>
-        <h3>Análisis de plantilla</h3>
-        <p>Evaluación de cada jugador tuyo: Intocable, Mantener, Considerar venta o Venta urgente con razones.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">💰</div>
-        <h3>Puja recomendada</h3>
-        <p>Calcula el máximo que deberías pagar por cada jugador según su valor real y tendencia de mercado.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔔</div>
-        <h3>Alertas de mercado</h3>
-        <p>Notificación 15 minutos antes del cierre del mercado y alertas cuando baja una cláusula que sigues.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🏆</div>
-        <h3>Clasificación en tiempo real</h3>
-        <p>Ranking de tu liga con valor de plantilla de cada manager y tu posición actualizada.</p>
+      <div class="int-card">
+        <div class="tag">Notificaciones</div>
+        <h3>Alertas inteligentes</h3>
+        <p>Aviso antes del cierre de mercado y alertas cuando baja la cláusula de un jugador que sigues.</p>
       </div>
     </div>
   </div>
 
-  <div class="highlight">
-    <div class="highlight-inner">
-      <div class="highlight-text">
-        <div class="section-label">Por qué FantasyStats</div>
-        <h2>Decisiones basadas en datos, no en corazonadas</h2>
-        <p>FantasyStats se conecta directamente con La Liga Fantasy y analiza en tiempo real la forma de los jugadores, el fixture, las tendencias de precio y las necesidades de tu plantilla.</p>
-        <p>No es un blog de consejos. Es un asistente que conoce tu equipo y te dice exactamente qué hacer.</p>
+  <div class="features-section">
+    <div class="features-inner">
+      <div class="features-header">
+        <div class="label">Funcionalidades</div>
+        <h2>Todo lo que necesitas para ganar</h2>
       </div>
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-num">700+</div>
-          <div class="stat-label">Jugadores analizados</div>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-title">Recomendaciones de mercado</div>
+          <div class="feature-desc">Nota 0-10 para cada jugador del mercado según tu plantilla, su forma, titularidad y rival próximo.</div>
         </div>
-        <div class="stat">
-          <div class="stat-num">10</div>
-          <div class="stat-label">Funcionalidades</div>
+        <div class="feature">
+          <div class="feature-title">11 Recomendado</div>
+          <div class="feature-desc">Alineación óptima con puntos estimados por jornada, capitán sugerido y rival de cada titular.</div>
         </div>
-        <div class="stat">
-          <div class="stat-num">0€</div>
-          <div class="stat-label">Gratis en fase beta</div>
+        <div class="feature">
+          <div class="feature-title">Clausulazos</div>
+          <div class="feature-desc">Jugadores rivales con cláusulas asequibles, valorados por calidad real vs coste. Con alertas automáticas.</div>
         </div>
-        <div class="stat">
-          <div class="stat-num">24h</div>
-          <div class="stat-label">Datos actualizados</div>
+        <div class="feature">
+          <div class="feature-title">Noticiero Fantasy</div>
+          <div class="feature-desc">Chollos de la jornada, jugadores subiendo y bajando de precio, recuperaciones y lesiones recientes.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Comparativa de jugadores</div>
+          <div class="feature-desc">Compara cualquier jugador del mercado, tu plantilla o clausulazos con estadísticas y veredicto.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Análisis de plantilla</div>
+          <div class="feature-desc">Evaluación de cada jugador tuyo: Intocable, Mantener, Considerar venta o Venta urgente.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Puja recomendada</div>
+          <div class="feature-desc">Calcula el máximo que deberías pagar por cada jugador según su valor real y tendencia.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Clasificación en tiempo real</div>
+          <div class="feature-desc">Ranking de tu liga con valor de plantilla de cada manager actualizado.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Historial de jugador</div>
+          <div class="feature-desc">Puntos por jornada, minutos jugados y evolución de precio de los últimos 30 días.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-label">Cómo funciona</div>
-    <div class="section-title">En 3 pasos</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Inicia sesión</h3>
-        <p>Con tu cuenta de La Liga Fantasy. Tus credenciales solo se usan para conectar con el juego.</p>
+  <div class="ai-section">
+    <div class="ai-inner">
+      <div>
+        <div style="color:#7c3aed;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Inteligencia artificial</div>
+        <h2>Recomendaciones que entienden tu situación</h2>
+        <p>No es un ranking genérico. FantasyStats analiza tu plantilla concreta, tu presupuesto y las necesidades de tu equipo para darte recomendaciones personalizadas.</p>
+        <ul class="ai-points">
+          <li>Pondera titularidad, forma reciente y fixture próximo</li>
+          <li>Ajusta las recomendaciones según tu presupuesto disponible</li>
+          <li>Detecta qué posiciones necesitas reforzar</li>
+          <li>Aprende de valoraciones manuales que introduces tú</li>
+        </ul>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Selecciona tu liga</h3>
-        <p>FantasyStats carga automáticamente tu plantilla, el mercado y los equipos rivales.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Toma mejores decisiones</h3>
-        <p>Consulta las recomendaciones, el 11 ideal y el noticiero antes de cada jornada.</p>
+      <div class="ai-stats">
+        <div class="ai-stat">
+          <div class="ai-stat-num">700+</div>
+          <div class="ai-stat-label">Jugadores analizados</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-num">10+</div>
+          <div class="ai-stat-label">Variables por jugador</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-num">24h</div>
+          <div class="ai-stat-label">Datos actualizados</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-num">0€</div>
+          <div class="ai-stat-label">Gratis en beta</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="cta-section">
-    <div class="badge" style="margin-bottom:32px"><span class="badge-dot"></span>Fase de pruebas cerrada — plazas limitadas</div>
-    <h2>Únete antes de la<br>temporada 26/27</h2>
-    <p>Actualmente en fase cerrada. Únete al grupo de testers para acceder ahora.</p>
+  <div class="steps-section">
+    <div class="steps-inner">
+      <div class="label">Cómo funciona</div>
+      <h2>Listo en menos de un minuto</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Inicia sesión</h3>
+          <p>Con tu cuenta de La Liga Fantasy. Tus credenciales solo se usan para conectar con el juego.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Selecciona tu liga</h3>
+          <p>FantasyStats carga automáticamente tu plantilla, el mercado y los equipos rivales.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Gana más jornadas</h3>
+          <p>Consulta las recomendaciones, el 11 ideal y el noticiero antes de cada jornada.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-final">
+    <div class="badge" style="margin-bottom:32px"><span class="badge-dot"></span>Fase cerrada — plazas limitadas</div>
+    <h2>Empieza a ganar<br>esta temporada</h2>
+    <p>Únete al grupo de testers para acceder ahora. Gratis durante toda la fase beta.</p>
     <div class="cta-group">
-      <a href="https://play.google.com/store/apps/details?id=com.guillefc.fantasystats" target="_blank" class="btn-primary">
-        <span class="btn-icon">▶</span> Descargar en Google Play
-      </a>
-      <a href="https://groups.google.com/g/fantasystats" target="_blank" class="btn-secondary">
-        <span class="btn-icon">🧪</span> Grupo de testers
-      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.guillefc.fantasystats" target="_blank" class="btn-primary">Descargar en Google Play</a>
+      <a href="https://groups.google.com/g/fantasystats" target="_blank" class="btn-secondary">Grupo de testers</a>
     </div>
   </div>
 
   <footer>
-    <a href="privacy.html">Política de Privacidad</a>
+    <a href="privacy.html">Privacidad</a>
     <a href="mailto:ffantasystats@gmail.com">Contacto</a>
     <a href="https://x.com/FFantasyStats" target="_blank">Twitter</a>
     <a href="https://groups.google.com/g/fantasystats" target="_blank">Testers</a>
     <div class="footer-note">FantasyStats · No oficial · No afiliado con La Liga · 2026</div>
   </footer>
+
 </body>
 </html>
