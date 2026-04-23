@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de uso — FantasyStats</title>
+  <link rel="icon" href="favicon.ico">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid #111; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo img { width: 32px; height: 32px; border-radius: 7px; }
+    .logo-name { font-weight: 800; font-size: 17px; color: #fff; }
+    .logo-name span { color: #7c3aed; }
+    .nav-links a { color: #555; text-decoration: none; font-size: 14px; margin-left: 24px; }
+    .nav-links a:hover { color: #fff; }
+
+    .hero { text-align: center; padding: 60px 20px 40px; border-bottom: 1px solid #111; }
+    .hero h1 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .hero p { color: #555; font-size: 16px; max-width: 500px; margin: 0 auto; }
+
+    .layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1100px; margin: 0 auto; min-height: calc(100vh - 200px); }
+    .sidebar { border-right: 1px solid #111; padding: 32px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-label { color: #333; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .sidebar a { display: block; color: #555; text-decoration: none; font-size: 13px; padding: 5px 8px; border-radius: 5px; margin-bottom: 2px; transition: all 0.15s; }
+    .sidebar a:hover, .sidebar a.active { color: #fff; background: #111; }
+
+    .content { padding: 40px 48px; }
+    .section { margin-bottom: 56px; scroll-margin-top: 20px; }
+    .section h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .section .lead { color: #555; font-size: 15px; line-height: 1.7; margin-bottom: 24px; border-bottom: 1px solid #111; padding-bottom: 20px; }
+    .section h3 { font-size: 15px; font-weight: 700; margin: 24px 0 10px; color: #e5e5e5; }
+    .section p { color: #555; font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+    .section ul, .section ol { color: #555; font-size: 14px; line-height: 1.8; padding-left: 20px; margin-bottom: 12px; }
+    .section li { margin-bottom: 4px; }
+    .tip { background: #7c3aed0d; border: 1px solid #7c3aed22; border-radius: 8px; padding: 14px 16px; margin: 16px 0; }
+    .tip strong { color: #a78bfa; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+    .tip p { color: #666; margin: 0; font-size: 13px; }
+    .warn { background: #f59e0b0d; border: 1px solid #f59e0b22; border-radius: 8px; padding: 14px 16px; margin: 16px 0; }
+    .warn strong { color: #f59e0b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+    .warn p { color: #666; margin: 0; font-size: 13px; }
+    .badge { display: inline-block; background: #111; border: 1px solid #222; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #888; font-family: monospace; }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 24px 20px; }
+      nav { padding: 16px 20px; }
+    }
+
+    footer { text-align: center; padding: 32px; border-top: 1px solid #111; color: #333; font-size: 13px; }
+    footer a { color: #444; text-decoration: none; margin: 0 10px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="FantasyStats">
+      <span class="logo-name">Fantasy<span>Stats</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="guia.html">Guía</a>
+      <a href="https://play.google.com/store/apps/details?id=com.guillefc.fantasystats" target="_blank">Descargar</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Guía de uso</h1>
+    <p>Todo lo que necesitas saber para sacar el máximo partido a FantasyStats.</p>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Primeros pasos</div>
+        <a href="#inicio">Inicio de sesión</a>
+        <a href="#ligas">Mis ligas</a>
+        <a href="#noticiero">Noticiero</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Dentro de tu liga</div>
+        <a href="#mercado">Mercado</a>
+        <a href="#plantilla">Plantilla</a>
+        <a href="#clausulazos">Clausulazos</a>
+        <a href="#once">11 Recomendado</a>
+        <a href="#comparativa">Comparativa</a>
+        <a href="#clasificacion">Clasificación</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Notificaciones</div>
+        <a href="#notif-mercado">Cierre de mercado</a>
+        <a href="#notif-clausulas">Desbloqueo de cláusulas</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Avanzado</div>
+        <a href="#notas">Cómo se calculan las notas</a>
+        <a href="#titularidad">% de titularidad</a>
+        <a href="#admin">Panel de admin</a>
+      </div>
+    </nav>
+
+    <div class="content">
+
+      <div class="section" id="inicio">
+        <h2>Inicio de sesión</h2>
+        <p class="lead">FantasyStats se conecta directamente con tu cuenta de La Liga Fantasy. No almacenamos tu contraseña — solo el token de sesión que genera La Liga Fantasy.</p>
+        <h3>Con email y contraseña</h3>
+        <p>Introduce el mismo email y contraseña que usas en la app oficial de La Liga Fantasy. Es la forma más rápida.</p>
+        <h3>Con Google</h3>
+        <p>Se abrirá una ventana del navegador con el login de La Liga Fantasy. Completa el proceso y la app recibirá el token automáticamente.</p>
+        <div class="tip">
+          <strong>Sesión automática</strong>
+          <p>FantasyStats renueva tu sesión automáticamente cuando el token está a punto de caducar. No necesitas volver a hacer login cada día.</p>
+        </div>
+      </div>
+
+      <div class="section" id="ligas">
+        <h2>Mis ligas</h2>
+        <p class="lead">Al entrar verás todas las ligas en las que participas. Pulsa el botón ↻ para refrescar si acabas de unirte a una nueva liga.</p>
+        <p>Cada tarjeta muestra tu posición en la clasificación y el dinero disponible. Pulsa cualquier liga para entrar en ella.</p>
+        <div class="tip">
+          <strong>Noticiero</strong>
+          <p>El icono 📰 en la cabecera abre el Noticiero Fantasy, que es independiente de cualquier liga y muestra datos globales del mercado.</p>
+        </div>
+      </div>
+
+      <div class="section" id="noticiero">
+        <h2>Noticiero Fantasy</h2>
+        <p class="lead">Información global del mercado, independiente de tu liga. Actualizado diariamente.</p>
+        <h3>Chollos de la jornada</h3>
+        <p>Jugadores de menos de 10M con media de puntos alta y buen rival próximo. Ordenados por eficiencia (puntos por millón). Los porteros no aparecen aquí.</p>
+        <h3>Subiendo / Bajando de precio</h3>
+        <p>Los 20 jugadores con mayor variación de precio diaria en términos absolutos (€/día). Útil para comprar antes de que suban o vender antes de que bajen.</p>
+        <h3>Recuperaciones</h3>
+        <p>Jugadores dudosos o cuyo precio ha empezado a moverse después de estar congelado (señal de vuelta de lesión).</p>
+        <h3>Lesiones y sanciones</h3>
+        <p>Jugadores con estado <span class="badge">injured</span> o <span class="badge">suspended</span>, ordenados por semanas de baja.</p>
+        <h3>Doble jornada</h3>
+        <p>Jugadores de equipos que juegan dos partidos en la misma semana. Son fichajes prioritarios.</p>
+      </div>
+
+      <div class="section" id="mercado">
+        <h2>Mercado</h2>
+        <p class="lead">Todos los jugadores disponibles para fichar en tu liga, ordenados por nota de recomendación (0-10).</p>
+        <h3>Filtros</h3>
+        <p>Usa los botones <span class="badge">Todos</span> <span class="badge">Liga</span> <span class="badge">Compañeros</span> para separar los jugadores puestos por La Liga Fantasy de los que venden tus rivales.</p>
+        <h3>La nota (0-10)</h3>
+        <p>Combina: % de titularidad, media de puntos reciente, tendencia de forma, necesidades de tu plantilla, tendencia de precio y dificultad del próximo rival.</p>
+        <h3>Puja recomendada</h3>
+        <p>El máximo que deberías pagar según el valor real del jugador y su tendencia. Si ves "Vende antes de fichar" significa que no tienes presupuesto pero el jugador sigue siendo recomendable.</p>
+        <div class="warn">
+          <strong>Importante</strong>
+          <p>La nota no penaliza a jugadores caros que no puedes permitirte. Si ves una nota alta pero no tienes dinero, la app te lo indica con el aviso "Vende antes de fichar".</p>
+        </div>
+      </div>
+
+      <div class="section" id="plantilla">
+        <h2>Plantilla</h2>
+        <p class="lead">Evaluación de cada jugador tuyo con recomendación de acción.</p>
+        <h3>Niveles de evaluación</h3>
+        <ul>
+          <li><strong>Intocable</strong> — Titular indiscutible con gran forma. No vendas bajo ningún concepto.</li>
+          <li><strong>Mantener</strong> — Jugador sólido sin razones claras para vender.</li>
+          <li><strong>Considerar venta</strong> — Hay señales de alerta (baja titularidad, forma bajando, precio cayendo).</li>
+          <li><strong>Venta urgente</strong> — Lesionado, sancionado, o no juega. Vende cuanto antes.</li>
+        </ul>
+        <h3>Cláusulas</h3>
+        <p>Para cada jugador con cláusula se muestra si está bloqueada y hasta cuándo. Si la cláusula está cerca del valor de mercado y se desbloquea pronto, aparece un aviso en rojo.</p>
+        <div class="tip">
+          <strong>Aviso de desbloqueo</strong>
+          <p>Activa el toggle "Aviso desbloqueo de cláusulas" para recibir una notificación exactamente cuando se desbloquee la cláusula de cada jugador tuyo.</p>
+        </div>
+      </div>
+
+      <div class="section" id="clausulazos">
+        <h2>Clausulazos</h2>
+        <p class="lead">Jugadores de equipos rivales con cláusulas activas, valorados por calidad real vs coste.</p>
+        <h3>Etiquetas</h3>
+        <ul>
+          <li><strong>Fichaje obligatorio</strong> — Gran jugador con cláusula cercana a su valor de mercado.</li>
+          <li><strong>Buen fichaje</strong> — Buena relación calidad/precio.</li>
+          <li><strong>Considerar</strong> — Puede valer la pena según tu situación.</li>
+          <li><strong>Pasar</strong> — La cláusula es demasiado cara respecto al valor del jugador.</li>
+        </ul>
+        <h3>La nota en clausulazos</h3>
+        <p>La nota penaliza directamente el sobrecoste de la cláusula en euros absolutos. Un jugador de 3M con cláusula de 10M (7M extra) recibe menos penalización que uno de 50M con cláusula de 150M (100M extra).</p>
+        <h3>Alertas</h3>
+        <p>Pulsa "Activar alerta" en cualquier jugador para recibir una notificación cuando su cláusula se desbloquee.</p>
+      </div>
+
+      <div class="section" id="once">
+        <h2>11 Recomendado</h2>
+        <p class="lead">La alineación óptima de tu plantilla para la próxima jornada.</p>
+        <p>El algoritmo prueba todas las formaciones posibles y elige la que maximiza los puntos esperados. Los puntos estimados se calculan como: <em>media cuando es titular × probabilidad de ser titular</em>.</p>
+        <h3>Capitán</h3>
+        <p>El jugador con más puntos esperados lleva el badge <span class="badge">C</span> dorado. Sus puntos se muestran multiplicados por 2.</p>
+        <h3>Rival próximo</h3>
+        <p>Debajo de cada jugador aparece el equipo rival y si juega en casa o fuera. Pulsa sobre cualquier jugador para ver su historial de puntos por jornada.</p>
+      </div>
+
+      <div class="section" id="comparativa">
+        <h2>Comparativa de jugadores</h2>
+        <p class="lead">Compara dos jugadores cualesquiera — de tu plantilla, del mercado o de clausulazos.</p>
+        <p>Escribe el nombre en cualquiera de los dos buscadores. Los resultados muestran de dónde viene cada jugador (Mi plantilla / Mercado / Compañero / Clausulazo).</p>
+        <p>La comparativa muestra: nota, media de puntos, % de titularidad, tendencias, precio, próximo rival y puja recomendada. Al final aparece un veredicto con el jugador recomendado.</p>
+      </div>
+
+      <div class="section" id="clasificacion">
+        <h2>Clasificación</h2>
+        <p class="lead">Ranking de tu liga con posición, puntos y valor de plantilla de cada manager.</p>
+      </div>
+
+      <div class="section" id="notif-mercado">
+        <h2>Notificación de cierre de mercado</h2>
+        <p class="lead">Activa el toggle en la parte superior del Mercado para recibir una notificación 15 minutos antes de que cierre el mercado de la jornada.</p>
+        <div class="warn">
+          <strong>Requiere build nativo</strong>
+          <p>Las notificaciones no funcionan en Expo Go. Necesitas la versión de Google Play.</p>
+        </div>
+      </div>
+
+      <div class="section" id="notif-clausulas">
+        <h2>Notificación de desbloqueo de cláusulas</h2>
+        <p class="lead">Activa el toggle "Aviso desbloqueo de cláusulas" en la pestaña Plantilla para recibir notificaciones cuando se desbloqueen las cláusulas de tus jugadores.</p>
+        <p>La notificación llega exactamente a la hora del desbloqueo con el nombre del jugador y el valor de la cláusula.</p>
+        <p>También puedes activar alertas individuales en Clausulazos para jugadores rivales.</p>
+      </div>
+
+      <div class="section" id="notas">
+        <h2>Cómo se calculan las notas</h2>
+        <p class="lead">La nota de fichaje (0-10) combina varios factores ponderados.</p>
+        <h3>Factores del mercado</h3>
+        <ul>
+          <li><strong>% Titularidad (25%)</strong> — Probabilidad de jugar basada en minutos recientes.</li>
+          <li><strong>Media de puntos (40%)</strong> — Puntos por jornada en las últimas 5 jornadas.</li>
+          <li><strong>Tendencia de forma (10%)</strong> — Si está mejorando o empeorando.</li>
+          <li><strong>Necesidades de plantilla (15%)</strong> — Si necesitas reforzar esa posición.</li>
+          <li><strong>Fixture (10%)</strong> — Dificultad del próximo rival.</li>
+        </ul>
+        <h3>Factores de plantilla</h3>
+        <p>La evaluación de tus jugadores también considera la tendencia de precio (solo cuenta si cae más del 0.3% del valor diario) y el presupuesto disponible.</p>
+        <div class="tip">
+          <strong>Overrides manuales</strong>
+          <p>Desde el panel de admin puedes ajustar manualmente el % de titularidad y la forma de cualquier jugador. Estos valores tienen prioridad sobre el cálculo automático.</p>
+        </div>
+      </div>
+
+      <div class="section" id="titularidad">
+        <h2>% de titularidad</h2>
+        <p class="lead">El porcentaje de titularidad se calcula a partir de los minutos jugados en las últimas 7 jornadas con pesos crecientes (las más recientes pesan más).</p>
+        <ul>
+          <li>≥75 minutos = titular completo (100%)</li>
+          <li>45-74 minutos = titular parcial (60%)</li>
+          <li>&lt;45 minutos = suplente (0%)</li>
+        </ul>
+        <p>Si en las últimas 3 jornadas los minutos han caído significativamente respecto a las 3 anteriores, se aplica una penalización adicional.</p>
+        <div class="warn">
+          <strong>Limitación conocida</strong>
+          <p>El algoritmo no puede predecir rotaciones tácticas ni el impacto de lesiones de compañeros. Para jugadores clave, puedes ajustar el % manualmente desde el panel de admin.</p>
+        </div>
+      </div>
+
+      <div class="section" id="admin">
+        <h2>Panel de administración</h2>
+        <p class="lead">Disponible en <a href="admin.html" style="color:#7c3aed">fantasystats-web.vercel.app/admin.html</a> (requiere clave de admin).</p>
+        <h3>Qué puedes editar</h3>
+        <ul>
+          <li><strong>% Titular</strong> — Sobreescribe el cálculo automático para ese jugador.</li>
+          <li><strong>Forma (1-5)</strong> — Multiplica la nota: 5 = +30%, 1 = -30%.</li>
+          <li><strong>Semanas fuera</strong> — Penaliza la nota según semanas de baja.</li>
+          <li><strong>Notas</strong> — Texto libre visible solo en el admin.</li>
+        </ul>
+        <h3>Seed de jugadores</h3>
+        <p>El botón "Seed jugadores" rellena la base de datos con todos los jugadores de tus ligas usando tu token de La Liga Fantasy.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <a href="index.html">Inicio</a>
+    <a href="privacy.html">Privacidad</a>
+    <a href="mailto:ffantasystats@gmail.com">Contacto</a>
+    <div style="margin-top:16px;color:#1a1a1a;font-size:12px">FantasyStats · No oficial · No afiliado con La Liga · 2026</div>
+  </footer>
+</body>
+</html>
