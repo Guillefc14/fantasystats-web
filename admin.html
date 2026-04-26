@@ -91,6 +91,7 @@
             <th>Puja máx</th>
             <th>Cláusula rec.</th>
             <th>Semanas fuera</th>
+            <th>Estado</th>
             <th>Notas</th>
             <th></th>
           </tr>
@@ -139,6 +140,15 @@
         <div class="form-group">
           <label>Semanas fuera</label>
           <input type="number" id="fWeeksOut" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Estado de visibilidad</label>
+          <select id="fVisibilityStatus" style="width:100%">
+            <option value="visible">Visible</option>
+            <option value="hidden">Oculto</option>
+            <option value="bug">Bug</option>
+            <option value="old">Viejo</option>
+          </select>
         </div>
       </div>
       <div class="form-group">
@@ -202,6 +212,14 @@
           <td>${formatM(r.max_bid)}</td>
           <td>${formatM(r.recommended_clause)}</td>
           <td>${r.weeks_out || 0}</td>
+          <td>
+            <select onchange="updateVisibility('${r.player_id}', this.value)" style="font-size:12px;padding:4px;border-radius:4px;background:${r.visibility_status !== 'visible' && r.visibility_status !== null ? '#ef444422' : '#111'};border:1px solid #222;color:#fff">
+              <option value="visible" ${r.visibility_status === 'visible' || !r.visibility_status ? 'selected' : ''}>Visible</option>
+              <option value="hidden" ${r.visibility_status === 'hidden' ? 'selected' : ''}>Oculto</option>
+              <option value="bug" ${r.visibility_status === 'bug' ? 'selected' : ''}>Bug</option>
+              <option value="old" ${r.visibility_status === 'old' ? 'selected' : ''}>Viejo</option>
+            </select>
+          </td>
           <td style="max-width:200px;color:#666;font-size:12px">${r.notes || '-'}</td>
           <td>
             <button class="secondary" onclick="editRating('${r.player_id}')" style="padding:6px 12px;font-size:12px">Editar</button>
@@ -256,7 +274,7 @@
       document.getElementById('modal').classList.add('open');
       document.getElementById('modalTitle').textContent = id ? 'Editar jugador' : 'Añadir jugador';
       if (!id) {
-        ['editId','fPlayerId','fPlayerName','fTeamName','fStarterProb','fForm','fMaxBid','fClause','fWeeksOut','fNotes']
+        ['editId','fPlayerId','fPlayerName','fTeamName','fStarterProb','fForm','fMaxBid','fClause','fWeeksOut','fVisibilityStatus','fNotes']
           .forEach(f => document.getElementById(f).value = '');
       }
     }
@@ -273,6 +291,7 @@
       document.getElementById('fMaxBid').value = r.max_bid ?? '';
       document.getElementById('fClause').value = r.recommended_clause ?? '';
       document.getElementById('fWeeksOut').value = r.weeks_out ?? 0;
+      document.getElementById('fVisibilityStatus').value = r.visibility_status || 'visible';
       document.getElementById('fNotes').value = r.notes || '';
       openModal(id);
     }
@@ -291,6 +310,7 @@
         max_bid: parseInt(document.getElementById('fMaxBid').value) || null,
         recommended_clause: parseInt(document.getElementById('fClause').value) || null,
         weeks_out: parseInt(document.getElementById('fWeeksOut').value) || 0,
+        visibility_status: document.getElementById('fVisibilityStatus').value || 'visible',
         notes: document.getElementById('fNotes').value.trim() || null,
       };
       if (!data.player_id) return alert('El ID del jugador es obligatorio');
@@ -304,6 +324,21 @@
         if (!res.ok) throw new Error(await res.text());
         closeModal();
         showStatus('Guardado correctamente', 'success');
+        loadRatings();
+      } catch (e) {
+        showStatus('Error: ' + e.message, 'error');
+      }
+    }
+
+    async function updateVisibility(id, status) {
+      try {
+        const res = await fetch(`${API}/admin/ratings/${id}/visibility`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+          body: JSON.stringify({ visibility_status: status }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        showStatus('Estado actualizado', 'success');
         loadRatings();
       } catch (e) {
         showStatus('Error: ' + e.message, 'error');
